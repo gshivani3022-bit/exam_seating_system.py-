@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Examination Seating Arrangement System – KLH University</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cse:#6366F1;--ece:#F59E0B;--aids:#10B981;--csit:#EF4444;
+  --bg:#07090F;--surf:#0E1118;--card:#131822;--card2:#181F2E;
+  --bdr:rgba(255,255,255,0.07);--bdr2:rgba(255,255,255,0.12);
+  --txt:#E2E8F0;--muted:#64748B;--muted2:#94A3B8;
+  --acc:#6366F1;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden;cursor:default}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:#1E293B;border-radius:3px}
+
+/* BACKGROUND */
+.bg-fx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-fx span{position:absolute;border-radius:50%;filter:blur(110px);opacity:.12}
+.bg-fx .g1{width:700px;height:700px;background:var(--cse);top:-200px;left:-150px;animation:gd 16s ease-in-out infinite alternate}
+.bg-fx .g2{width:500px;height:500px;background:var(--aids);bottom:-150px;right:-100px;animation:gd 20s ease-in-out infinite alternate-reverse}
+.bg-fx .g3{width:350px;height:350px;background:var(--ece);top:50%;left:55%;animation:gd 13s ease-in-out infinite alternate}
+@keyframes gd{from{transform:translate(0,0) scale(1)}to{transform:translate(50px,30px) scale(1.1)}}
+.grid-bg{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+
+/* WRAPPER */
+.z1{position:relative;z-index:1}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:200;background:rgba(7,9,15,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;padding:13px 28px;max-width:1240px;margin:0 auto;gap:16px}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:900;font-size:1.15rem;letter-spacing:-.02em;white-space:nowrap}
+.logo-ic{width:34px;height:34px;background:linear-gradient(135deg,#6366F1,#8B5CF6);border-radius:10px;display:grid;place-items:center;font-size:.95rem;flex-shrink:0}
+.nav-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.nav-tabs a{color:var(--muted2);text-decoration:none;font-size:.8rem;font-weight:600;padding:6px 12px;border-radius:8px;transition:all .2s;white-space:nowrap}
+.nav-tabs a:hover,.nav-tabs a.act{color:var(--txt);background:var(--bdr)}
+.nav-right{display:flex;gap:8px;flex-shrink:0}
+.nbtn{padding:7px 16px;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;border:none;transition:all .2s}
+.nbtn-ghost{background:transparent;border:1px solid var(--bdr2);color:var(--muted2)}
+.nbtn-ghost:hover{border-color:var(--acc);color:var(--txt)}
+.nbtn-fill{background:linear-gradient(135deg,var(--cse),#8B5CF6);color:#fff;box-shadow:0 4px 20px rgba(99,102,241,.3)}
+.nbtn-fill:hover{opacity:.85}
+
+/* ── PAGE SECTIONS (SPA) ── */
+.page{display:none}.page.active{display:block}
+
+/* ── HERO ── */
+.hero{padding:90px 0 60px;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);color:#A5B4FC;font-size:.73rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:6px 16px;border-radius:99px;margin-bottom:26px}
+.hero h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(2.6rem,7vw,4.8rem);line-height:1.05;letter-spacing:-.04em;margin-bottom:20px}
+.hero h1 em{font-style:italic;background:linear-gradient(90deg,#818CF8,#34D399,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--muted2);font-size:1.05rem;max-width:580px;margin:0 auto 36px;line-height:1.75}
+.hero-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:60px}
+.ha-btn{padding:13px 26px;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;border:none;transition:all .25s}
+.ha-primary{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;box-shadow:0 8px 30px rgba(79,70,229,.35)}
+.ha-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(79,70,229,.45)}
+.ha-outline{background:transparent;border:1px solid var(--bdr2);color:var(--txt)}
+.ha-outline:hover{background:var(--bdr);border-color:var(--bdr2)}
+
+/* DEPT CARDS */
+.dept-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:60px}
+@media(max-width:700px){.dept-strip{grid-template-columns:repeat(2,1fr)}}
+.dept-card{background:var(--card);border:1px solid var(--bdr);border-radius:18px;padding:22px 18px;text-align:center;transition:all .3s;cursor:pointer}
+.dept-card:hover{transform:translateY(-4px)}
+.dept-card.cse:hover{border-color:rgba(99,102,241,.5);box-shadow:0 16px 40px rgba(99,102,241,.15)}
+.dept-card.ece:hover{border-color:rgba(245,158,11,.5);box-shadow:0 16px 40px rgba(245,158,11,.15)}
+.dept-card.aids:hover{border-color:rgba(16,185,129,.5);box-shadow:0 16px 40px rgba(16,185,129,.15)}
+.dept-card.csit:hover{border-color:rgba(239,68,68,.5);box-shadow:0 16px 40px rgba(239,68,68,.15)}
+.dept-icon{width:50px;height:50px;border-radius:14px;margin:0 auto 12px;display:grid;place-items:center;font-size:1.4rem}
+.di-cse{background:rgba(99,102,241,.15)}.di-ece{background:rgba(245,158,11,.15)}.di-aids{background:rgba(16,185,129,.15)}.di-csit{background:rgba(239,68,68,.15)}
+.dept-card h4{font-family:'Fraunces',serif;font-weight:700;font-size:1rem;margin-bottom:4px}
+.dept-card span{color:var(--muted);font-size:.75rem}
+.dept-pill{display:inline-block;font-size:.65rem;font-weight:700;padding:2px 9px;border-radius:99px;margin-top:7px}
+.dp-cse{background:rgba(99,102,241,.2);color:#818CF8}.dp-ece{background:rgba(245,158,11,.2);color:#FCD34D}.dp-aids{background:rgba(16,185,129,.2);color:#6EE7B7}.dp-csit{background:rgba(239,68,68,.2);color:#FCA5A5}
+
+/* STAT ROW */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0;background:var(--card);border:1px solid var(--bdr);border-radius:20px;overflow:hidden;margin-bottom:0}
+.stat-it{padding:24px 20px;text-align:center;border-right:1px solid var(--bdr)}
+.stat-it:last-child{border-right:none}
+.stat-n{font-family:'Fraunces',serif;font-weight:900;font-size:2rem;background:linear-gradient(135deg,#818CF8,#34D399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-l{color:var(--muted);font-size:.75rem;margin-top:4px;font-weight:500}
+
+/* ── SECTION SHARED ── */
+section{padding:72px 0}
+.sec-head{text-align:center;margin-bottom:52px}
+.sec-head h2{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(1.9rem,4vw,2.8rem);letter-spacing:-.03em;margin-bottom:10px}
+.sec-head p{color:var(--muted2);font-size:.95rem;max-width:480px;margin:0 auto}
+.eyebrow{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:4px 12px;border-radius:99px;margin-bottom:14px}
+.ey-blue{background:rgba(99,102,241,.12);color:#818CF8;border:1px solid rgba(99,102,241,.25)}
+.ey-green{background:rgba(16,185,129,.12);color:#34D399;border:1px solid rgba(16,185,129,.25)}
+.ey-amber{background:rgba(245,158,11,.12);color:#FCD34D;border:1px solid rgba(245,158,11,.25)}
+.ey-red{background:rgba(239,68,68,.12);color:#FCA5A5;border:1px solid rgba(239,68,68,.25)}
+.ey-violet{background:rgba(139,92,246,.12);color:#C4B5FD;border:1px solid rgba(139,92,246,.25)}
+
+/* ── FEATURES ── */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
+.feat-card{background:var(--card);border:1px solid var(--bdr);border-radius:18px;padding:28px 24px;position:relative;overflow:hidden;transition:all .3s}
+.feat-card::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none}
+.feat-card:hover{transform:translateY(-3px)}
+.feat-card:hover::after{opacity:1}
+.fc-a::after{background:radial-gradient(circle at 0 0,rgba(99,102,241,.07),transparent 60%)}
+.fc-b::after{background:radial-gradient(circle at 0 0,rgba(245,158,11,.07),transparent 60%)}
+.fc-c::after{background:radial-gradient(circle at 0 0,rgba(16,185,129,.07),transparent 60%)}
+.fc-d::after{background:radial-gradient(circle at 0 0,rgba(239,68,68,.07),transparent 60%)}
+.fc-e::after{background:radial-gradient(circle at 0 0,rgba(6,182,212,.07),transparent 60%)}
+.fc-f::after{background:radial-gradient(circle at 0 0,rgba(236,72,153,.07),transparent 60%)}
+.fc-g::after{background:radial-gradient(circle at 0 0,rgba(139,92,246,.07),transparent 60%)}
+.fc-h::after{background:radial-gradient(circle at 0 0,rgba(251,191,36,.07),transparent 60%)}
+.feat-card:hover.fc-a{border-color:rgba(99,102,241,.35)}.feat-card:hover.fc-b{border-color:rgba(245,158,11,.35)}.feat-card:hover.fc-c{border-color:rgba(16,185,129,.35)}.feat-card:hover.fc-d{border-color:rgba(239,68,68,.35)}.feat-card:hover.fc-e{border-color:rgba(6,182,212,.35)}.feat-card:hover.fc-f{border-color:rgba(236,72,153,.35)}.feat-card:hover.fc-g{border-color:rgba(139,92,246,.35)}.feat-card:hover.fc-h{border-color:rgba(251,191,36,.35)}
+.feat-ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.25rem;margin-bottom:16px;position:relative;z-index:1}
+.fi-a{background:rgba(99,102,241,.15)}.fi-b{background:rgba(245,158,11,.15)}.fi-c{background:rgba(16,185,129,.15)}.fi-d{background:rgba(239,68,68,.15)}.fi-e{background:rgba(6,182,212,.15)}.fi-f{background:rgba(236,72,153,.15)}.fi-g{background:rgba(139,92,246,.15)}.fi-h{background:rgba(251,191,36,.15)}
+.feat-card h3{font-family:'Fraunces',serif;font-weight:700;font-size:1rem;margin-bottom:8px;position:relative;z-index:1}
+.feat-card p{color:var(--muted2);font-size:.83rem;line-height:1.65;position:relative;z-index:1}
+.feat-num{position:absolute;top:20px;right:20px;font-family:'Fraunces',serif;font-weight:900;font-size:2rem;color:rgba(255,255,255,.04);line-height:1}
+
+/* ── DEMO / DASHBOARD ── */
+.dash-layout{display:grid;grid-template-columns:240px 1fr;gap:20px;min-height:560px}
+@media(max-width:768px){.dash-layout{grid-template-columns:1fr}}
+.dash-sidebar{background:var(--card);border:1px solid var(--bdr);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:6px}
+.dash-sidebar h4{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:10px 10px 6px;margin-top:8px}
+.dash-sidebar h4:first-child{margin-top:0}
+.slink{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:10px;font-size:.83rem;font-weight:500;color:var(--muted2);cursor:pointer;transition:all .2s;border:none;background:transparent;width:100%;text-align:left}
+.slink:hover{background:var(--bdr);color:var(--txt)}
+.slink.act{background:rgba(99,102,241,.15);color:#818CF8;font-weight:600}
+.slink .si{width:20px;text-align:center}
+.slink .badge{margin-left:auto;background:var(--cse);color:#fff;font-size:.62rem;padding:1px 7px;border-radius:99px;font-weight:700}
+
+.dash-main{display:flex;flex-direction:column;gap:16px}
+
+/* DASHBOARD HOME */
+.dash-home{display:none}
+.dash-home.vis{display:flex;flex-direction:column;gap:16px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.k1::before{background:linear-gradient(90deg,#6366F1,#8B5CF6)}
+.kpi.k2::before{background:linear-gradient(90deg,#F59E0B,#EF4444)}
+.kpi.k3::before{background:linear-gradient(90deg,#10B981,#06B6D4)}
+.kpi.k4::before{background:linear-gradient(90deg,#EC4899,#8B5CF6)}
+.kpi-val{font-family:'Fraunces',serif;font-weight:900;font-size:1.9rem;line-height:1;margin-bottom:4px}
+.kpi-lbl{font-size:.75rem;color:var(--muted);font-weight:500}
+.kpi-sub{font-size:.72rem;color:var(--aids);margin-top:6px;font-weight:600}
+
+.panel{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:20px}
+.panel-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.panel-hd h3{font-family:'Fraunces',serif;font-weight:700;font-size:.95rem}
+.panel-hd .phd-btn{font-size:.73rem;font-weight:600;color:var(--acc);cursor:pointer;background:none;border:none;padding:4px 10px;border-radius:7px;transition:background .2s}
+.panel-hd .phd-btn:hover{background:rgba(99,102,241,.1)}
+
+/* SEATING DEMO */
+.seat-demo-layout{display:grid;grid-template-columns:220px 1fr;gap:16px}
+@media(max-width:700px){.seat-demo-layout{grid-template-columns:1fr}}
+.ctrl-panel{display:flex;flex-direction:column;gap:10px}
+.cp-group{background:var(--card2);border:1px solid var(--bdr);border-radius:12px;padding:14px}
+.cp-group label{display:block;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.cp-group select,.cp-group input{width:100%;background:var(--bg);border:1px solid var(--bdr);color:var(--txt);padding:8px 11px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;outline:none;transition:border-color .2s}
+.cp-group select:focus,.cp-group input:focus{border-color:var(--acc)}
+.cp-range{display:flex;align-items:center;gap:8px}
+.cp-range input[type=range]{flex:1;accent-color:var(--acc)}
+.cp-range span{font-family:'Fraunces',serif;font-weight:900;font-size:1rem;min-width:26px;text-align:right;color:var(--txt)}
+.gen-btn{width:100%;padding:11px;border-radius:11px;border:none;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(79,70,229,.3)}
+.gen-btn:hover{opacity:.88;transform:scale(1.02)}.seat-canvas{display:flex;flex-direction:column;gap:10px}
+.sc-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.sc-room-name{font-family:'Fraunces',serif;font-weight:700;font-size:.95rem}
+.sc-stats{display:flex;gap:8px;flex-wrap:wrap}
+.sc-stat{font-size:.72rem;font-weight:600;padding:3px 10px;border-radius:99px;background:var(--bdr);color:var(--muted2)}
+.board-bar{background:linear-gradient(90deg,rgba(79,70,229,.2),rgba(124,58,237,.2));border:1px solid rgba(99,102,241,.3);border-radius:8px;padding:7px 16px;text-align:center;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#818CF8}
+#seat-grid{display:grid;gap:5px}
+.seat{aspect-ratio:1;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;border:1px solid transparent;position:relative;overflow:visible;line-height:1.2;text-align:center;padding:2px}
+.seat:hover{transform:scale(1.15);z-index:10}
+.seat.empty{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.05)}
+.seat.cse{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.45);color:#818CF8}
+.seat.ece{background:rgba(245,158,11,.2);border-color:rgba(245,158,11,.45);color:#FCD34D}
+.seat.aids{background:rgba(16,185,129,.2);border-color:rgba(16,185,129,.45);color:#34D399}
+.seat.csit{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.45);color:#FCA5A5}
+.seat.special{background:rgba(6,182,212,.2);border-color:rgba(6,182,212,.45);color:#67E8F9}
+.seat.blocked{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.04)}
+.seat:hover::after{content:attr(data-tip);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:#1E293B;border:1px solid var(--bdr2);color:var(--txt);padding:5px 10px;border-radius:7px;font-size:.65rem;white-space:nowrap;pointer-events:none;z-index:20;font-weight:600}
+.legend-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:2px}
+.leg{display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--muted2)}
+.ld{width:10px;height:10px;border-radius:3px}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.data-table th{padding:10px 14px;text-align:left;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--bdr);background:var(--surf)}
+.data-table td{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--muted2)}
+.data-table tr:hover td{background:rgba(255,255,255,.02);color:var(--txt)}
+.data-table tr:last-child td{border-bottom:none}
+.td-dept{display:inline-block;font-size:.65rem;font-weight:700;padding:2px 9px;border-radius:99px}
+.td-cse{background:rgba(99,102,241,.15);color:#818CF8}.td-ece{background:rgba(245,158,11,.15);color:#FCD34D}.td-aids{background:rgba(16,185,129,.15);color:#34D399}.td-csit{background:rgba(239,68,68,.15);color:#FCA5A5}
+.td-status{font-size:.7rem;font-weight:600;padding:2px 9px;border-radius:99px}
+.ts-ok{background:rgba(16,185,129,.15);color:#34D399}.ts-pend{background:rgba(245,158,11,.15);color:#FCD34D}.ts-sp{background:rgba(6,182,212,.15);color:#67E8F9}
+.search-bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.sb-input{flex:1;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);padding:9px 14px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.83rem;outline:none;min-width:180px}
+.sb-input:focus{border-color:var(--acc)}
+.sb-sel{background:var(--surf);border:1px solid var(--bdr);color:var(--muted2);padding:9px 14px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.83rem;outline:none;cursor:pointer}
+.sb-btn{padding:9px 18px;background:linear-gradient(135deg,var(--cse),#7C3AED);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.8rem;cursor:pointer}
+
+/* SCHEDULE */
+.sched-grid{display:grid;gap:10px}
+.sched-item{display:flex;gap:14px;align-items:flex-start;background:var(--card2);border:1px solid var(--bdr);border-radius:12px;padding:16px 18px;transition:border-color .2s}
+.sched-item:hover{border-color:var(--bdr2)}
+.sched-date{flex-shrink:0;width:50px;height:50px;border-radius:12px;display:grid;place-items:center;flex-direction:column;text-align:center;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25)}
+.sd-d{font-family:'Fraunces',serif;font-weight:900;font-size:1.3rem;line-height:1;color:#818CF8}
+.sd-m{font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase}
+.sched-info{flex:1}
+.sched-info h4{font-weight:700;font-size:.9rem;margin-bottom:5px}
+.sched-info p{font-size:.78rem;color:var(--muted2)}
+.sched-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.stag{font-size:.65rem;font-weight:600;padding:2px 9px;border-radius:99px;background:var(--bdr);color:var(--muted2)}
+.stag.hall{background:rgba(16,185,129,.1);color:#34D399}.stag.time{background:rgba(245,158,11,.1);color:#FCD34D}.stag.sub{background:rgba(99,102,241,.1);color:#818CF8}
+
+/* ANALYTICS */
+.chart-wrap{background:var(--card2);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:16px}
+.chart-title{font-size:.8rem;font-weight:600;color:var(--muted2);margin-bottom:14px}
+.bar-chart{display:flex;flex-direction:column;gap:10px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-label{font-size:.75rem;font-weight:600;width:40px;text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:20px;background:rgba(255,255,255,.04);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;transition:width 1s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.62rem;font-weight:700;color:rgba(255,255,255,.7)}
+.pie-row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.pie-svg-wrap{flex-shrink:0}
+.pie-legend{display:flex;flex-direction:column;gap:8px}
+.pie-leg{display:flex;align-items:center;gap:8px;font-size:.78rem}
+.pie-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+
+/* ALERTS / NOTIF */
+.notif-list{display:flex;flex-direction:column;gap:10px}
+.notif-item{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:11px;border:1px solid}
+.notif-item.ni-info{background:rgba(99,102,241,.07);border-color:rgba(99,102,241,.2)}
+.notif-item.ni-warn{background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.2)}
+.notif-item.ni-err{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.2)}
+.notif-item.ni-ok{background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.2)}
+.ni-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.ni-body h5{font-size:.83rem;font-weight:700;margin-bottom:3px}
+.ni-body p{font-size:.76rem;color:var(--muted2);line-height:1.5}
+.ni-time{font-size:.68rem;color:var(--muted);margin-top:5px}
+
+/* ATTENDANCE */
+.att-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.att-card{background:var(--card2);border:1px solid var(--bdr);border-radius:11px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s}
+.att-card:hover{border-color:var(--bdr2);transform:translateY(-1px)}
+.att-check{width:28px;height:28px;border-radius:8px;border:2px solid var(--bdr2);display:grid;place-items:center;font-size:.85rem;transition:all .2s;flex-shrink:0}
+.att-card.present .att-check{background:rgba(16,185,129,.2);border-color:var(--aids);color:var(--aids)}
+.att-card.absent .att-check{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:#FCA5A5}
+.att-info h5{font-size:.8rem;font-weight:700}
+.att-info p{font-size:.7rem;color:var(--muted)}
+.att-seat{font-size:.65rem;font-weight:700;color:var(--acc);margin-top:2px}
+
+/* HOW IT WORKS */
+.hiw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;position:relative}
+.hiw-grid::before{content:'';position:absolute;top:46px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,var(--bdr),var(--bdr2),var(--bdr),transparent)}
+.hiw-step{text-align:center;padding:16px}
+.hiw-num{width:68px;height:68px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;font-family:'Fraunces',serif;font-weight:900;font-size:1.3rem;position:relative;z-index:1;transition:transform .3s}
+.hiw-step:hover .hiw-num{transform:scale(1.1)}
+.hn1{background:linear-gradient(135deg,#4F46E5,#6366F1);box-shadow:0 0 30px rgba(79,70,229,.4)}
+.hn2{background:linear-gradient(135deg,#7C3AED,#EC4899);box-shadow:0 0 30px rgba(236,72,153,.4)}
+.hn3{background:linear-gradient(135deg,#06B6D4,#10B981);box-shadow:0 0 30px rgba(6,182,212,.4)}
+.hn4{background:linear-gradient(135deg,#F59E0B,#EF4444);box-shadow:0 0 30px rgba(245,158,11,.4)}
+.hn5{background:linear-gradient(135deg,#EC4899,#6366F1);box-shadow:0 0 30px rgba(236,72,153,.4)}
+.hiw-step h3{font-family:'Fraunces',serif;font-weight:700;margin-bottom:7px;font-size:.95rem}
+.hiw-step p{color:var(--muted2);font-size:.8rem;line-height:1.6}
+
+/* ABSTRACT */
+.abs-card{background:linear-gradient(135deg,rgba(79,70,229,.07),rgba(16,185,129,.04));border:1px solid rgba(99,102,241,.2);border-radius:22px;padding:44px 48px;position:relative;overflow:hidden}
+@media(max-width:600px){.abs-card{padding:28px 24px}}
+.abs-card::before{content:'"';font-family:'Fraunces',serif;font-size:16rem;font-weight:900;line-height:1;color:rgba(99,102,241,.05);position:absolute;top:-40px;left:10px;pointer-events:none}
+.abs-card h3{font-family:'Fraunces',serif;font-weight:900;font-size:1.5rem;margin-bottom:18px;position:relative}
+.abs-card p{color:var(--muted2);line-height:1.85;font-size:.92rem;margin-bottom:14px;position:relative}
+.abs-card p strong{color:#A5B4FC}
+.abs-card p:last-child{margin-bottom:0}
+
+/* AUTH SCREEN */
+.auth-wrap{display:flex;min-height:400px;align-items:center;justify-content:center;padding:40px 0}
+.auth-box{background:var(--card);border:1px solid var(--bdr);border-radius:22px;padding:40px;width:100%;max-width:420px;margin:0 auto}
+.auth-box h2{font-family:'Fraunces',serif;font-weight:900;font-size:1.6rem;margin-bottom:6px}
+.auth-box p{color:var(--muted2);font-size:.83rem;margin-bottom:26px}
+.form-field{margin-bottom:14px}
+.form-field label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.form-field input,.form-field select{width:100%;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);padding:11px 14px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s}
+.form-field input:focus{border-color:var(--acc)}
+.auth-btn{width:100%;padding:12px;border-radius:11px;border:none;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;transition:opacity .2s;margin-top:8px}
+.auth-btn:hover{opacity:.85}
+.role-tabs{display:flex;gap:8px;margin-bottom:20px}
+.role-tab{flex:1;padding:9px;border-radius:9px;border:1px solid var(--bdr);background:transparent;color:var(--muted2);font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.8rem;cursor:pointer;transition:all .2s}
+.role-tab.act{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.4);color:#818CF8}
+
+/* FOOTER */
+footer{border-top:1px solid var(--bdr);padding:44px 0;text-align:center}
+footer .fl{font-family:'Fraunces',serif;font-weight:900;font-size:1.1rem;margin-bottom:10px}
+footer .ft-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+footer .fb{background:var(--card);border:1px solid var(--bdr);border-radius:99px;padding:4px 14px;font-size:.73rem;color:var(--muted2)}
+footer p{color:var(--muted);font-size:.78rem}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.anim{opacity:0;animation:fadeUp .6s ease forwards}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.4s}.d5{animation-delay:.5s}.d6{animation-delay:.6s}
+
+/* Toast */
+#toast{position:fixed;bottom:24px;right:24px;background:#1E293B;border:1px solid var(--bdr2);color:var(--txt);padding:12px 20px;border-radius:12px;font-size:.83rem;font-weight:600;z-index:999;transform:translateY(80px);opacity:0;transition:all .35s}
+#toast.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+<div class="bg-fx"><span class="g1"></span><span class="g2"></span><span class="g3"></span></div>
+<div class="grid-bg"></div>
+<div id="toast"></div>
+
+<!-- NAV -->
+<nav class="z1">
+  <div class="nav-in">
+    <div class="nav-logo"><div class="logo-ic">🎓</div>ExamSeat <span style="color:var(--muted);font-weight:400;font-size:.85rem">KLH</span></div>
+    <div class="nav-tabs">
+      <a href="#" onclick="showPage('home')" class="act" id="nt-home">Home</a>
+      <a href="#" onclick="showPage('features')" id="nt-features">Features</a>
+      <a href="#" onclick="showPage('demo')" id="nt-demo">Live Demo</a>
+      <a href="#" onclick="showPage('schedule')" id="nt-schedule">Schedule</a>
+      <a href="#" onclick="showPage('analytics')" id="nt-analytics">Analytics</a>
+      <a href="#" onclick="showPage('abstract')" id="nt-abstract">Abstract</a>
+    </div>
+    <div class="nav-right">
+      <button class="nbtn nbtn-ghost" onclick="showPage('login')">Login</button>
+      <button class="nbtn nbtn-fill">KLH Univ</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════════════════ HOME PAGE ════════════════════ -->
+<div id="page-home" class="page active z1">
+  <div class="wrap">
+    <div class="hero">
+      <div class="hero-badge anim d1">✦ KLH University — B.Tech Project 2026</div>
+      <h1 class="anim d2">Smart <em>Examination</em><br/>Seating System</h1>
+      <p class="anim d3">Automate, optimize, and manage conflict-free examination seating across CSE, ECE, AIDS & CSIT departments — eliminating malpractice and saving hours of manual work.</p>
+      <div class="hero-actions anim d4">
+        <button class="ha-btn ha-primary" onclick="showPage('demo')">▶ Open Live Demo</button>
+        <button class="ha-btn ha-outline" onclick="showPage('features')">Explore Features →</button>
+        <button class="ha-btn ha-outline" onclick="showPage('login')">🔐 Admin Login</button>
+      </div>
+
+      <!-- Dept Cards -->
+      <div class="dept-strip anim d5">
+        <div class="dept-card cse" onclick="showPage('demo')">
+          <div class="dept-icon di-cse">💻</div>
+          <h4>CSE</h4>
+          <span>Computer Science</span><br/>
+          <div class="dept-pill dp-cse">120 Students</div>
+        </div>
+        <div class="dept-card ece" onclick="showPage('demo')">
+          <div class="dept-icon di-ece">📡</div>
+          <h4>ECE</h4>
+          <span>Electronics & Comm.</span><br/>
+          <div class="dept-pill dp-ece">98 Students</div>
+        </div>
+        <div class="dept-card aids" onclick="showPage('demo')">
+          <div class="dept-icon di-aids">🤖</div>
+          <h4>AIDS</h4>
+          <span>AI & Data Science</span><br/>
+          <div class="dept-pill dp-aids">84 Students</div>
+        </div>
+        <div class="dept-card csit" onclick="showPage('demo')">
+          <div class="dept-icon di-csit">🛡️</div>
+          <h4>CSIT</h4>
+          <span>CS & Info. Tech.</span><br/>
+          <div class="dept-pill dp-csit">76 Students</div>
+        </div>
+      </div>
+
+      <div class="stat-row anim d6">
+        <div class="stat-it"><div class="stat-n">4</div><div class="stat-l">Departments</div></div>
+        <div class="stat-it"><div class="stat-n">378</div><div class="stat-l">Total Students</div></div>
+        <div class="stat-it"><div class="stat-n">12</div><div class="stat-l">Exam Halls</div></div>
+        <div class="stat-it"><div class="stat-n">100%</div><div class="stat-l">Conflict-Free</div></div>
+        <div class="stat-it"><div class="stat-n">3s</div><div class="stat-l">Auto-Generate</div></div>
+        <div class="stat-it"><div class="stat-n">20</div><div class="stat-l">Core Features</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ FEATURES PAGE ════════════════════ -->
+<div id="page-features" class="page z1">
+  <div class="wrap">
+    <section>
+      <div class="sec-head">
+        <div class="eyebrow ey-blue">20 Features</div>
+        <h2>Everything Built In</h2>
+        <p>A complete examination management ecosystem for modern universities.</p>
+      </div>
+      <div class="feat-grid">
+        <div class="feat-card fc-a"><div class="feat-num">01</div><div class="feat-ico fi-a">👤</div><h3>Student Registration & Management</h3><p>Add, update, and manage student details including hall ticket numbers, department, and semester information.</p></div>
+        <div class="feat-card fc-b"><div class="feat-num">02</div><div class="feat-ico fi-b">📊</div><h3>Admin Dashboard</h3><p>Centralized dashboard for managing examinations, students, and seating plans with quick access to reports.</p></div>
+        <div class="feat-card fc-c"><div class="feat-num">03</div><div class="feat-ico fi-c">📅</div><h3>Exam Creation & Scheduling</h3><p>Create examination sessions with dates, timings, and subjects assigned to each department.</p></div>
+        <div class="feat-card fc-d"><div class="feat-num">04</div><div class="feat-ico fi-d">🏛️</div><h3>Classroom Management</h3><p>Add and manage examination halls, define room capacities and seating layouts per building.</p></div>
+        <div class="feat-card fc-e"><div class="feat-num">05</div><div class="feat-ico fi-e">⚡</div><h3>Automatic Seat Allocation</h3><p>Automatically assign seats to students generating optimized arrangements with minimal manual effort.</p></div>
+        <div class="feat-card fc-f"><div class="feat-num">06</div><div class="feat-ico fi-f">🚫</div><h3>Conflict-Free Seating</h3><p>Prevent students from sitting next to specified students and reduce malpractice opportunities significantly.</p></div>
+        <div class="feat-card fc-g"><div class="feat-num">07</div><div class="feat-ico fi-g">🔀</div><h3>Dept-Wise Distribution</h3><p>Mix CSE, ECE, AIDS, and CSIT students from different departments in the same hall for better security.</p></div>
+        <div class="feat-card fc-h"><div class="feat-num">08</div><div class="feat-ico fi-h">♿</div><h3>Special Accommodation</h3><p>Reserve accessible seats for students with special needs and provide dedicated seating arrangements.</p></div>
+        <div class="feat-card fc-a"><div class="feat-num">09</div><div class="feat-ico fi-a">🎫</div><h3>Hall Ticket Verification</h3><p>Verify student details before seat allocation to avoid duplicate or incorrect seat assignments.</p></div>
+        <div class="feat-card fc-b"><div class="feat-num">10</div><div class="feat-ico fi-b">🗺️</div><h3>Seating Chart Generation</h3><p>Generate hall-wise and room-wise seating charts automatically with seat numbers and student details clearly.</p></div>
+        <div class="feat-card fc-c"><div class="feat-num">11</div><div class="feat-ico fi-c">🔍</div><h3>Search & Filter</h3><p>Search students by hall ticket number, name, or department. Filter seating arrangements by room or exam.</p></div>
+        <div class="feat-card fc-d"><div class="feat-num">12</div><div class="feat-ico fi-d">📥</div><h3>Download & Print Reports</h3><p>Download seating arrangements in PDF format and print hall-wise attendance and seating sheets.</p></div>
+        <div class="feat-card fc-e"><div class="feat-num">13</div><div class="feat-ico fi-e">🔄</div><h3>Real-Time Updates</h3><p>Instantly update seating arrangements when changes occur without recreating the entire plan.</p></div>
+        <div class="feat-card fc-f"><div class="feat-num">14</div><div class="feat-ico fi-f">⚠️</div><h3>Over-Constraint Detection</h3><p>Detect impossible seating scenarios and display clear error messages with actionable suggestions.</p></div>
+        <div class="feat-card fc-g"><div class="feat-num">15</div><div class="feat-ico fi-g">✅</div><h3>Attendance Management</h3><p>Mark student attendance during examinations and generate detailed attendance reports per hall.</p></div>
+        <div class="feat-card fc-h"><div class="feat-num">16</div><div class="feat-ico fi-h">🔐</div><h3>User Authentication</h3><p>Secure login for administrators and staff with role-based access control per department.</p></div>
+        <div class="feat-card fc-a"><div class="feat-num">17</div><div class="feat-ico fi-a">🔔</div><h3>Notifications & Announcements</h3><p>Notify students about exam halls and seat numbers. Display important examination announcements.</p></div>
+        <div class="feat-card fc-b"><div class="feat-num">18</div><div class="feat-ico fi-b">📈</div><h3>Analytics & Reports</h3><p>View hall utilization statistics and generate comprehensive examination management reports.</p></div>
+        <div class="feat-card fc-c"><div class="feat-num">19</div><div class="feat-ico fi-c">📱</div><h3>Responsive Web Interface</h3><p>Fully accessible on desktops, laptops, tablets, and mobile devices without any loss of functionality.</p></div>
+        <div class="feat-card fc-d"><div class="feat-num">20</div><div class="feat-ico fi-d">🛡️</div><h3>Database Backup & Security</h3><p>Secure storage of student and examination data with regular backup and recovery support built in.</p></div>
+      </div>
+    </section>
+  </div>
+</div><!-- ════════════════════ DEMO / DASHBOARD PAGE ════════════════════ -->
+<div id="page-demo" class="page z1">
+  <div class="wrap">
+    <section>
+      <div class="sec-head">
+        <div class="eyebrow ey-violet">Live Dashboard</div>
+        <h2>Admin Control Center</h2>
+        <p>Manage all departments, halls, and seating from a single dashboard.</p>
+      </div>
+      <div class="dash-layout">
+        <!-- Sidebar -->
+        <div class="dash-sidebar">
+          <h4>Overview</h4>
+          <button class="slink act" onclick="dashShow('home',this)"><span class="si">🏠</span>Dashboard <span class="badge">4</span></button>
+          <button class="slink" onclick="dashShow('students',this)"><span class="si">👥</span>Students</button>
+          <button class="slink" onclick="dashShow('seating',this)"><span class="si">🗺️</span>Seat Generator</button>
+          <h4>Departments</h4>
+          <button class="slink" onclick="dashShow('seating',this);setDept('CSE')"><span class="si">💻</span>CSE</button>
+          <button class="slink" onclick="dashShow('seating',this);setDept('ECE')"><span class="si">📡</span>ECE</button>
+          <button class="slink" onclick="dashShow('seating',this);setDept('AIDS')"><span class="si">🤖</span>AIDS</button>
+          <button class="slink" onclick="dashShow('seating',this);setDept('CSIT')"><span class="si">🛡️</span>CSIT</button>
+          <h4>Tools</h4>
+          <button class="slink" onclick="dashShow('attendance',this)"><span class="si">✅</span>Attendance</button>
+          <button class="slink" onclick="dashShow('notifications',this)"><span class="si">🔔</span>Notifications</button>
+          <button class="slink" onclick="showPage('analytics')"><span class="si">📈</span>Analytics</button>
+          <button class="slink" onclick="showPage('login')"><span class="si">🔐</span>Logout</button>
+        </div>
+
+        <!-- Main panels -->
+        <div class="dash-main">
+          <!-- DASH HOME -->
+          <div id="dsh-home" class="dash-home vis">
+            <div class="kpi-row">
+              <div class="kpi k1"><div class="kpi-val" style="background:linear-gradient(135deg,#818CF8,#6366F1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">378</div><div class="kpi-lbl">Total Students</div><div class="kpi-sub">↑ 12 new this week</div></div>
+              <div class="kpi k2"><div class="kpi-val" style="background:linear-gradient(135deg,#FCD34D,#EF4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">12</div><div class="kpi-lbl">Exam Halls</div><div class="kpi-sub">4 in use today</div></div>
+              <div class="kpi k3"><div class="kpi-val" style="background:linear-gradient(135deg,#34D399,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">8</div><div class="kpi-lbl">Active Exams</div><div class="kpi-sub">Next: 9:00 AM</div></div>
+              <div class="kpi k4"><div class="kpi-val" style="background:linear-gradient(135deg,#F472B6,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">96%</div><div class="kpi-lbl">Seat Utilization</div><div class="kpi-sub">15 seats vacant</div></div>
+            </div>
+            <div class="panel">
+              <div class="panel-hd"><h3>Recent Allocations</h3><button class="phd-btn" onclick="toast('Refreshing...')">Refresh</button></div>
+              <table class="data-table">
+                <thead><tr><th>Hall Ticket</th><th>Name</th><th>Dept</th><th>Hall</th><th>Seat</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>KLH2024001</td><td>Arjun Reddy</td><td><span class="td-dept td-cse">CSE</span></td><td>Hall A</td><td>A-12</td><td><span class="td-status ts-ok">Allocated</span></td></tr>
+                  <tr><td>KLH2024002</td><td>Priya ECE</td><td><span class="td-dept td-ece">ECE</span></td><td>Hall A</td><td>A-13</td><td><span class="td-status ts-ok">Allocated</span></td></tr>
+                  <tr><td>KLH2024003</td><td>Ravi AIDS</td><td><span class="td-dept td-aids">AIDS</span></td><td>Hall A</td><td>A-14</td><td><span class="td-status ts-ok">Allocated</span></td></tr>
+                  <tr><td>KLH2024004</td><td>Sneha CSIT</td><td><span class="td-dept td-csit">CSIT</span></td><td>Hall A</td><td>A-15</td><td><span class="td-status ts-ok">Allocated</span></td></tr>
+                  <tr><td>KLH2024005</td><td>Kiran Sharma</td><td><span class="td-dept td-cse">CSE</span></td><td>Hall B</td><td>B-01</td><td><span class="td-status ts-sp">Special</span></td></tr>
+                  <tr><td>KLH2024006</td><td>Divya Nair</td><td><span class="td-dept td-ece">ECE</span></td><td>Hall B</td><td>B-02</td><td><span class="td-status ts-pend">Pending</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- STUDENTS PANEL -->
+          <div id="dsh-students" class="dash-home">
+            <div class="panel">
+              <div class="panel-hd"><h3>Student Management</h3><button class="phd-btn" onclick="toast('Student added!')">+ Add Student</button></div>
+              <div class="search-bar">
+                <input class="sb-input" placeholder="Search by name or hall ticket…" oninput="filterStudents(this.value)"/>
+                <select class="sb-sel" onchange="filterStudents('')"><option value="">All Depts</option><option>CSE</option><option>ECE</option><option>AIDS</option><option>CSIT</option></select>
+                <button class="sb-btn" onclick="toast('Search done!')">Search</button>
+              </div>
+              <table class="data-table" id="stu-table">
+                <thead><tr><th>Hall Ticket</th><th>Name</th><th>Department</th><th>Semester</th><th>Seat</th><th>Action</th></tr></thead>
+                <tbody id="stu-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- SEATING PANEL -->
+          <div id="dsh-seating" class="dash-home">
+            <div class="panel">
+              <div class="panel-hd"><h3>Seat Generator</h3><button class="phd-btn" onclick="toast('Chart exported as PDF!')">📥 Export PDF</button></div>
+              <div class="seat-demo-layout">
+                <div class="ctrl-panel">
+                  <div class="cp-group">
+                    <label>Exam Hall</label>
+                    <select id="d-hall"><option>Hall A — Block 1</option><option>Hall B — Block 2</option><option>Hall C — Lab Wing</option><option>Hall D — Mini Hall</option></select>
+                  </div>
+                  <div class="cp-group">
+                    <label>Rows</label>
+                    <div class="cp-range"><input type="range" id="d-rows" min="3" max="8" value="5" oninput="document.getElementById('d-rv').textContent=this.value"/><span id="d-rv">5</span></div>
+                  </div>
+                  <div class="cp-group">
+                    <label>Columns</label>
+                    <div class="cp-range"><input type="range" id="d-cols" min="3" max="10" value="8" oninput="document.getElementById('d-cv').textContent=this.value"/><span id="d-cv">8</span></div>
+                  </div>
+                  <div class="cp-group">
+                    <label>Departments</label>
+                    <select id="d-dept" multiple style="height:90px">
+                      <option selected>CSE</option><option selected>ECE</option><option selected>AIDS</option><option selected>CSIT</option>
+                    </select>
+                  </div>
+                  <div class="cp-group">
+                    <label>Mix Pattern</label>
+                    <select id="d-mode"><option value="rotate">Rotate All Depts</option><option value="pair">Pair Alternate</option><option value="block">Block Assign</option></select>
+                  </div>
+                  <button class="gen-btn" onclick="generateSeating()">⚡ Generate Seating</button>
+                </div>
+                <div class="seat-canvas">
+                  <div class="sc-top">
+                    <div class="sc-room-name" id="sc-rn">Hall A — Block 1</div>
+                    <div class="sc-stats">
+                      <div class="sc-stat" id="sc-fill">–</div>
+                      <div class="sc-stat" id="sc-mix">4 Depts Mixed</div>
+                    </div>
+                  </div>
+                  <div class="board-bar">📋 Examination Board / Invigilator Desk</div>
+                  <div id="seat-grid"></div>
+                  <div class="legend-row">
+                    <div class="leg"><div class="ld" style="background:rgba(99,102,241,.5)"></div>CSE</div>
+                    <div class="leg"><div class="ld" style="background:rgba(245,158,11,.5)"></div>ECE</div>
+                    <div class="leg"><div class="ld" style="background:rgba(16,185,129,.5)"></div>AIDS</div>
+                    <div class="leg"><div class="ld" style="background:rgba(239,68,68,.5)"></div>CSIT</div>
+                    <div class="leg"><div class="ld" style="background:rgba(6,182,212,.5)"></div>Special</div>
+                    <div class="leg"><div class="ld" style="background:rgba(255,255,255,.05)"></div>Empty</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ATTENDANCE PANEL -->
+          <div id="dsh-attendance" class="dash-home">
+            <div class="panel">
+              <div class="panel-hd"><h3>Attendance — Hall A (Today)</h3><button class="phd-btn" onclick="toast('Report generated!')">📊 Report</button></div>
+              <div class="att-grid" id="att-grid"></div>
+              <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+                <button onclick="markAll('present')" style="padding:8px 18px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#34D399;border-radius:9px;font-weight:700;font-size:.78rem;cursor:pointer">✅ Mark All Present</button>
+                <button onclick="markAll('absent')" style="padding:8px 18px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#FCA5A5;border-radius:9px;font-weight:700;font-size:.78rem;cursor:pointer">❌ Mark All Absent</button>
+                <button onclick="toast('Attendance saved!')" style="padding:8px 18px;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:.78rem;cursor:pointer">💾 Save</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- NOTIFICATIONS PANEL -->
+          <div id="dsh-notifications" class="dash-home">
+            <div class="panel">
+              <div class="panel-hd"><h3>Notifications & Announcements</h3><button class="phd-btn" onclick="toast('Announcement sent to all!')">📢 Broadcast</button></div>
+              <div class="notif-list">
+                <div class="notif-item ni-ok"><div class="ni-icon">✅</div><div class="ni-body"><h5>Seating Generated — Hall A</h5><p>All 40 seats allocated for CSE, ECE, AIDS and CSIT students for Data Structures exam.</p><div class="ni-time">Today 8:15 AM</div></div></div>
+                <div class="notif-item ni-warn"><div class="ni-icon">⚠️</div><div class="ni-body"><h5>Hall B Capacity Warning</h5><p>Hall B is at 94% capacity. Consider redistributing 3 students to Hall C.</p><div class="ni-time">Today 8:02 AM</div></div></div>
+                <div class="notif-item ni-info"><div class="ni-icon">📋</div><div class="ni-body"><h5>New Exam Scheduled — AIDS Dept</h5><p>Machine Learning exam added for June 10, 2026. Seating auto-assignment pending.</p><div class="ni-time">Yesterday 4:30 PM</div></div></div>
+                <div class="notif-item ni-err"><div class="ni-icon">🚫</div><div class="ni-body"><h5>Over-Constraint Detected</h5><p>Cannot place all CSIT students without conflict in Hall D. Reduce conflict constraints or expand hall.</p><div class="ni-time">Yesterday 2:10 PM</div></div></div>
+                <div class="notif-item ni-ok"><div class="ni-icon">🎓</div><div class="ni-body"><h5>Student KLH2024099 Verified</h5><p>Hall ticket verified and seat A-22 confirmed for ECE student Pooja Sharma.</p><div class="ni-time">Jun 3, 2026</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ════════════════════ SCHEDULE PAGE ════════════════════ -->
+<div id="page-schedule" class="page z1">
+  <div class="wrap">
+    <section>
+      <div class="sec-head">
+        <div class="eyebrow ey-amber">Exam Calendar</div>
+        <h2>Exam Schedule</h2>
+        <p>Upcoming examination sessions for all four departments at KLH University.</p>
+      </div>
+      <div class="sched-grid">
+        <div class="sched-item"><div class="sched-date"><div class="sd-d">06</div><div class="sd-m">Jun</div></div><div class="sched-info"><h4>Data Structures & Algorithms</h4><p>CSE — 3rd Semester Examination</p><div class="sched-tags"><span class="stag hall">🏛 Hall A & B</span><span class="stag time">⏰ 9:00 AM – 12:00 PM</span><span class="stag sub">💻 CSE</span></div></div></div>
+        <div class="sched-item"><div class="sched-date"><div class="sd-d">07</div><div class="sd-m">Jun</div></div><div class="sched-info"><h4>Signals & Systems</h4><p>ECE — 3rd Semester Examination</p><div class="sched-tags"><span class="stag hall">🏛 Hall C</span><span class="stag time">⏰ 2:00 PM – 5:00 PM</span><span class="stag sub">📡 ECE</span></div></div></div>
+        <div class="sched-item"><div class="sched-date"><div class="sd-d">08</div><div class="sd-m">Jun</div></div><div class="sched-info"><h4>Machine Learning Fundamentals</h4><p>AIDS — 4th Semester Examination</p><div class="sched-tags"><span class="stag hall">🏛 Hall A</span><span class="stag time">⏰ 9:00 AM – 12:00 PM</span><span class="stag sub">🤖 AIDS</span></div></div></div>
+        <div class="sched-item"><div class="sched-date"><div class="sd-d">09</div><div class="sd-m">Jun</div></div><div class="sched-info"><h4>Information Security</h4><p>CSIT — 4th Semester Examination</p><div class="sched-tags"><span class="stag hall">🏛 Hall D</span><span class="stag time">⏰ 2:00 PM – 5:00 PM</span><span class="stag sub">🛡️ CSIT</span></div></div></div>
+        <div class="sched-item"><div class="sched-date"><div class="sd-d">10</div><div class="sd-m">Jun</div></div><div class="sched-info"><h4>Computer Networks</h4><p>CSE + ECE — Joint Examination</p><div class="sched-tags"><span class="stag hall">🏛 Hall A, B & C</span><span class="stag time">⏰ 9:00 AM – 12:00 PM</span><span class="stag sub">💻 CSE</span><span class="stag sub" style="background:rgba(245,158,11,.1);color:#FCD34D">📡 ECE</span></div></div></div>
+        <div class="sched-item"><div class="sched-date"><div class="sd-d">11</div><div class="sd-m">Jun</div></div><div class="sched-info"><h4>Deep Learning & Neural Networks</h4><p>AIDS — 5th Semester Examination</p><div class="sched-tags"><span class="stag hall">🏛 Hall B</span><span class="stag time">⏰ 9:00 AM – 12:00 PM</span><span class="stag sub">🤖 AIDS</span></div></div></div>
+        <div class="sched-item"><div class="sched-date"><div class="sd-d">12</div><div class="sd-m">Jun</div></div><div class="sched-info"><h4>Operating Systems</h4><p>CSE + CSIT — Joint Examination</p><div class="sched-tags"><span class="stag hall">🏛 Hall A & D</span><span class="stag time">⏰ 2:00 PM – 5:00 PM</span><span class="stag sub">💻 CSE</span><span class="stag sub" style="background:rgba(239,68,68,.1);color:#FCA5A5">🛡️ CSIT</span></div></div></div>
+        <div class="sched-item"><div class="sched-date"><div class="sd-d">13</div><div class="sd-m">Jun</div></div><div class="sched-info"><h4>Digital Signal Processing</h4><p>ECE — 5th Semester Examination</p><div class="sched-tags"><span class="stag hall">🏛 Hall C</span><span class="stag time">⏰ 9:00 AM – 12:00 PM</span><span class="stag sub">📡 ECE</span></div></div></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ════════════════════ ANALYTICS PAGE ════════════════════ -->
+<div id="page-analytics" class="page z1">
+  <div class="wrap">
+    <section>
+      <div class="sec-head">
+        <div class="eyebrow ey-green">Reports</div>
+        <h2>Analytics & Reports</h2>
+        <p>Hall utilization, department distribution, and examination management statistics.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px">
+        <div class="chart-wrap">
+          <div class="chart-title">Hall Utilization (%)</div>
+          <div class="bar-chart">
+            <div class="bar-row"><span class="bar-label" style="color:#818CF8">Hall A</span><div class="bar-track"><div class="bar-fill" style="width:96%;background:linear-gradient(90deg,#6366F1,#8B5CF6)">96%</div></div></div>
+            <div class="bar-row"><span class="bar-label" style="color:#FCD34D">Hall B</span><div class="bar-track"><div class="bar-fill" style="width:82%;background:linear-gradient(90deg,#F59E0B,#EF4444)">82%</div></div></div>
+            <div class="bar-row"><span class="bar-label" style="color:#34D399">Hall C</span><div class="bar-track"><div class="bar-fill" style="width:74%;background:linear-gradient(90deg,#10B981,#06B6D4)">74%</div></div></div>
+            <div class="bar-row"><span class="bar-label" style="color:#FCA5A5">Hall D</span><div class="bar-track"><div class="bar-fill" style="width:61%;background:linear-gradient(90deg,#EF4444,#EC4899)">61%</div></div></div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Student Distribution by Department</div>
+          <div class="pie-row">
+            <div class="pie-svg-wrap">
+              <svg width="130" height="130" viewBox="0 0 42 42">
+                <circle r="15.91549430918954" cx="21" cy="21" fill="transparent" stroke="#6366F1" stroke-width="8" stroke-dasharray="32 68" stroke-dashoffset="25"/>
+                <circle r="15.91549430918954" cx="21" cy="21" fill="transparent" stroke="#F59E0B" stroke-width="8" stroke-dasharray="26 74" stroke-dashoffset="-7"/>
+                <circle r="15.91549430918954" cx="21" cy="21" fill="transparent" stroke="#10B981" stroke-width="8" stroke-dasharray="22 78" stroke-dashoffset="-33"/>
+                <circle r="15.91549430918954" cx="21" cy="21" fill="transparent" stroke="#EF4444" stroke-width="8" stroke-dasharray="20 80" stroke-dashoffset="-55"/>
+              </svg>
+            </div>
+            <div class="pie-legend">
+              <div class="pie-leg"><div class="pie-dot" style="background:#6366F1"></div><span>CSE — 120 (32%)</span></div>
+              <div class="pie-leg"><div class="pie-dot" style="background:#F59E0B"></div><span>ECE — 98 (26%)</span></div>
+              <div class="pie-leg"><div class="pie-dot" style="background:#10B981"></div><span>AIDS — 84 (22%)</span></div>
+              <div class="pie-leg"><div class="pie-dot" style="background:#EF4444"></div><span>CSIT — 76 (20%)</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Conflict-Free Allocation Rate</div>
+          <div class="bar-chart">
+            <div class="bar-row"><span class="bar-label" style="color:#818CF8">CSE</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#6366F1,#06B6D4)">100%</div></div></div>
+            <div class="bar-row"><span class="bar-label" style="color:#FCD34D">ECE</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#F59E0B,#10B981)">100%</div></div></div>
+            <div class="bar-row"><span class="bar-label" style="color:#34D399">AIDS</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#10B981,#6366F1)">100%</div></div></div>
+            <div class="bar-row"><span class="bar-label" style="color:#FCA5A5">CSIT</span><div class="bar-track"><div class="bar-fill" style="width:97%;background:linear-gradient(90deg,#EF4444,#8B5CF6)">97%</div></div></div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Special Accommodations by Dept</div>
+          <div class="bar-chart">
+            <div class="bar-row"><span class="bar-label" style="color:#818CF8">CSE</span><div class="bar-track"><div class="bar-fill" style="width:50%;background:rgba(99,102,241,.6)">6</div></div></div>
+            <div class="bar-row"><span class="bar-label" style="color:#FCD34D">ECE</span><div class="bar-track"><div class="bar-fill" style="width:33%;background:rgba(245,158,11,.6)">4</div></div></div>
+            <div class="bar-row"><span class="bar-label" style="color:#34D399">AIDS</span><div class="bar-track"><div class="bar-fill" style="width:25%;background:rgba(16,185,129,.6)">3</div></div></div>
+            <div class="bar-row"><span class="bar-label" style="color:#FCA5A5">CSIT</span><div class="bar-track"><div class="bar-fill" style="width:17%;background:rgba(239,68,68,.6)">2</div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ════════════════════ ABSTRACT PAGE ════════════════════ -->
+<div id="page-abstract" class="page z1">
+  <div class="wrap">
+    <section>
+      <div class="sec-head">
+        <div class="eyebrow ey-blue">Project Abstract</div>
+        <h2>About This System</h2>
+      </div>
+      <div class="abs-card">
+        <h3>Examination Seating Arrangement System</h3>
+        <p>The <strong>Examination Seating Arrangement System</strong> is designed to automate and optimize the process of allocating seats for students during examinations across multiple departments — <strong>CSE, ECE, AIDS, and CSIT</strong> — at Koneru Lakshmaiah Education Foundation. The main objective of the system is to create a fair, organized, and conflict-free seating arrangement while considering various constraints such as adjacency conflicts, room capacity, and special student requirements.</p>
+        <p>The system intelligently assigns seats in a way that <strong>prevents students from sitting next to each other when conflicts exist</strong>, thereby reducing malpractice opportunities and improving examination discipline. Department-wise distribution ensures that students from different branches are interleaved — CSE, ECE, AIDS, and CSIT students are mixed systematically within each hall to maximize examination fairness.</p>
+        <p>In addition, the system is capable of handling <strong>special accommodations</strong> for students with specific needs and can detect over-constrained scenarios where seating allocation becomes impossible under the given conditions. In such cases, the system provides clear explanations for the failure, helping administrators identify and resolve the issue efficiently.</p>
+        <p>The project features a complete admin dashboard with student management, hall ticket verification, real-time updates, analytics, attendance tracking, notification system, and PDF export capabilities. The project enhances accuracy, reduces manual effort, saves time, and ensures better management of examination halls. Overall, this system provides a <strong>smart and reliable solution</strong> for modern examination seating management.</p>
+      </div>
+
+      <!-- How it works -->
+      <div style="margin-top:56px">
+        <div class="sec-head"><div class="eyebrow ey-green">Process</div><h2>How It Works</h2></div>
+        <div class="hiw-grid">
+          <div class="hiw-step"><div class="hiw-num hn1">1</div><h3>Input Data</h3><p>Upload student lists for all four departments with hall ticket numbers and special requirements.</p></div>
+          <div class="hiw-step"><div class="hiw-num hn2">2</div><h3>Set Constraints</h3><p>Define conflict rules — no two students of same branch sit adjacent in any row or column.</p></div>
+          <div class="hiw-step"><div class="hiw-num hn3">3</div><h3>Auto Mix & Assign</h3><p>Algorithm rotates CSE→ECE→AIDS→CSIT pattern ensuring perfect inter-department mixing.</p></div>
+          <div class="hiw-step"><div class="hiw-num hn4">4</div><h3>Verify & Confirm</h3><p>Hall ticket verification and conflict scan runs before finalizing the arrangement.</p></div>
+          <div class="hiw-step"><div class="hiw-num hn5">5</div><h3>Export & Publish</h3><p>Download PDF charts, print attendance sheets, and notify students via the announcement system.</p></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ════════════════════ LOGIN PAGE ════════════════════ -->
+<div id="page-login" class="page z1">
+  <div class="wrap">
+    <div class="auth-wrap">
+      <div class="auth-box">
+        <h2>Secure Login</h2>
+        <p>Access the Examination Seating Arrangement System</p>
+        <div class="role-tabs">
+          <button class="role-tab act" onclick="this.parentNode.querySelectorAll('.role-tab').forEach(b=>b.classList.remove('act'));this.classList.add('act')">🔑 Admin</button>
+          <button class="role-tab" onclick="this.parentNode.querySelectorAll('.role-tab').forEach(b=>b.classList.remove('act'));this.classList.add('act')">👤 Staff</button>
+          <button class="role-tab" onclick="this.parentNode.querySelectorAll('.role-tab').forEach(b=>b.classList.remove('act'));this.classList.add('act')">🎓 Student</button>
+        </div>
+        <div class="form-field"><label>Username / Hall Ticket</label><input type="text" placeholder="e.g. admin or KLH2024001"/></div>
+        <div class="form-field"><label>Password</label><input type="password" placeholder="Enter password"/></div>
+        <div class="form-field"><label>Department</label><select><option>Select Department</option><option>CSE</option><option>ECE</option><option>AIDS</option><option>CSIT</option><option>Admin</option></select></div>
+        <button class="auth-btn" onclick="toast('✅ Login Successful! Redirecting…');setTimeout(()=>showPage('demo'),1200)">Login →</button>
+        <p style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:14px">Role-based access · Secure authentication · KLH University</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="z1">
+  <div class="wrap">
+    <div class="fl">🎓 ExamSeat — KLH University</div>
+    <div class="ft-badges">
+      <div class="fb">Koneru Lakshmaiah Education Foundation</div>
+      <div class="fb">CSE · ECE · AIDS · CSIT</div>
+      <div class="fb">B.Tech Project 2026</div>
+      <div class="fb">Hyderabad, Telangana</div>
+    </div>
+    <p>Off-Campus: Bachupally-Gandimaisamma Road, Bowrampet, Hyderabad – 500 043 · Phone: 7815926816</p>
+    <p style="margin-top:6px;color:#1E293B">Built with ❤️ for college submission</p>
+  </div>
+</footer>
+
+<script>
+// ── PAGE ROUTING ──
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tabs a').forEach(a=>a.classList.remove('act'));
+  const nt=document.getElementById('nt-'+id);
+  if(nt) nt.classList.add('act');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='demo') { buildStudentTable(); buildAttendance(); generateSeating(); }
+}
+
+// ── TOAST ──
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── DASHBOARD PANELS ──
+function dashShow(panel,btn){
+  document.querySelectorAll('.dash-home').forEach(d=>d.classList.remove('vis'));
+  document.getElementById('dsh-'+panel).classList.add('vis');
+  document.querySelectorAll('.slink').forEach(b=>b.classList.remove('act'));
+  if(btn) btn.classList.add('act');
+}
+
+// ── SET DEPT IN SEATING ──
+function setDept(d){
+  const sel=document.getElementById('d-dept');
+  Array.from(sel.options).forEach(o=>o.selected=(o.value===d||o.text===d));
+  generateSeating();
+}
+
+// ── STUDENT DATA ──
+const depts=['CSE','ECE','AIDS','CSIT'];
+const deptCls={CSE:'td-cse',ECE:'td-ece',AIDS:'td-aids',CSIT:'td-csit'};
+const names=['Arjun Reddy','Priya ECE','Ravi Kumar','Sneha Sharma','Kiran Singh','Divya Nair','Mohan Rao','Ananya Devi','Suresh Babu','Kavya Lata','Vikram Sai','Pooja Shah','Rahul Verma','Shruti Menon','Aakash Patel','Meena Rani','Tej Vardhan','Nisha Yadav','Sai Charan','Deepa Pillai','Harsha Gupta','Lavanya Roy','Nikhil Joshi','Swathi Iyer','Charan Kumar','Revathi Reddy','Arun Teja','Bhavya Sri'];
+const sems=['3rd','3rd','4th','4th','5th','5th','6th','6th'];
+let students=[];
+function buildStudentTable(){
+  if(students.length) return;
+  for(let i=0;i<28;i++){
+    students.push({ht:'KLH20240'+(i+1).toString().padStart(2,'0'),name:names[i],dept:depts[i%4],sem:sems[i%8],seat:String.fromCharCode(65+Math.floor(i/7))+'-'+String.fromCharCode(65+Math.floor(i/4))+(i%8+1)});
+  }
+  renderStudents(students);
+}
+function renderStudents(list){
+  const tb=document.getElementById('stu-tbody');
+  if(!tb) return;
+  tb.innerHTML=list.map(s=>`<tr><td>${s.ht}</td><td>${s.name}</td><td><span class="td-dept ${deptCls[s.dept]}">${s.dept}</span></td><td>${s.sem} Sem</td><td>${s.seat}</td><td><button onclick="toast('✏️ Editing ${s.name}')" style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);color:#818CF8;padding:3px 10px;border-radius:6px;cursor:pointer;font-size:.7rem;font-weight:700">Edit</button></td></tr>`).join('');
+}
+function filterStudents(v){
+  const filtered=students.filter(s=>s.name.toLowerCase().includes(v.toLowerCase())||s.ht.includes(v));
+  renderStudents(filtered);
+}
+
+// ── ATTENDANCE ──
+const attNames=['Arjun Reddy','Priya ECE','Ravi Kumar','Sneha Sharma','Kiran Singh','Divya Nair','Mohan Rao','Ananya Devi','Suresh Babu','Kavya Lata','Vikram Sai','Pooja Shah','Rahul Verma','Shruti Menon','Aakash Patel','Meena Rani'];
+const attDepts=['CSE','ECE','AIDS','CSIT','CSE','ECE','AIDS','CSIT','CSE','ECE','AIDS','CSIT','CSE','ECE','AIDS','CSIT'];
+function buildAttendance(){
+  const g=document.getElementById('att-grid');
+  if(!g||g.children.length) return;
+  attNames.forEach((n,i)=>{
+    const seat=String.fromCharCode(65+Math.floor(i/4))+'-'+(i%4+1);
+    const div=document.createElement('div');
+    div.className='att-card present';
+    div.innerHTML=`<div class="att-check">✓</div><div class="att-info"><h5>${n}</h5><p>${attDepts[i]}</p><div class="att-seat">Seat ${seat}</div></div>`;
+    div.onclick=function(){this.classList.toggle('present');this.classList.toggle('absent');this.querySelector('.att-check').textContent=this.classList.contains('present')?'✓':'✗';};
+    g.appendChild(div);
+  });
+}
+function markAll(st){
+  document.querySelectorAll('.att-card').forEach(c=>{c.className='att-card '+st;c.querySelector('.att-check').textContent=st==='present'?'✓':'✗';});
+  toast(st==='present'?'✅ All marked Present':'❌ All marked Absent');
+}
+
+// ── SEAT GENERATOR ──
+const deptClasses=['cse','ece','aids','csit'];
+const deptLabels=['CSE','ECE','AIDS','CSIT'];
+const sNamesBydept={
+  CSE:['Arjun','Kiran','Rahul','Aakash','Charan','Harsha','Nikhil','Sai','Tej','Vikram'],
+  ECE:['Priya','Divya','Kavya','Meena','Nisha','Revathi','Shruti','Swathi','Lavanya','Pooja'],
+  AIDS:['Ravi','Mohan','Suresh','Arun','Deepa','Ananya','Bhavya','Sneha','Lakshmi','Geetha'],
+  CSIT:['Sneha','Vikram','Rohit','Naveen','Pavani','Sirisha','Mahesh','Krishna','Teja','Bhargav']
+};
+let deptCounters={CSE:0,ECE:0,AIDS:0,CSIT:0};
+
+function generateSeating(){
+  const hallSel=document.getElementById('d-hall');
+  const rows=parseInt(document.getElementById('d-rows').value)||5;
+  const cols=parseInt(document.getElementById('d-cols').value)||8;
+  const total=rows*cols;
+  const hallName=hallSel?hallSel.options[hallSel.selectedIndex].text:'Hall A';
+  document.getElementById('sc-rn').textContent=hallName;
+  deptCounters={CSE:0,ECE:0,AIDS:0,CSIT:0};
+
+  const sel=document.getElementById('d-dept');
+  let activeDepts=sel?Array.from(sel.options).filter(o=>o.selected).map(o=>o.text):['CSE','ECE','AIDS','CSIT'];
+  if(!activeDepts.length) activeDepts=['CSE','ECE','AIDS','CSIT'];
+
+  const students=Math.round(total*0.88);
+  const specialSlots=[0,1];
+  const seats=[];
+
+  for(let i=0;i<total;i++){
+    if(i>=students){seats.push({t:'empty'});continue;}
+    if(specialSlots.includes(i)){seats.push({t:'special',label:'SPL',tip:'Special Needs — Front Seat'});continue;}
+    const dept=activeDepts[i%activeDepts.length];
+    const dc=deptClasses[deptLabels.indexOf(dept)]||'cse';
+    const nm=(sNamesBydept[dept]||sNamesBydept.CSE)[deptCounters[dept]%10];
+    deptCounters[dept]=(deptCounters[dept]||0)+1;
+    const seatId=String.fromCharCode(65+Math.floor(i/cols))+'-'+(i%cols+1);
+    seats.push({t:dc,label:dept,tip:`${nm} · ${dept} · Seat ${seatId}`});
+  }
+
+  const grid=document.getElementById('seat-grid');
+  if(!grid) return;
+  grid.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+  grid.innerHTML='';
+  seats.forEach(s=>{
+    const el=document.createElement('div');
+    el.className='seat '+(s.t==='empty'?'empty':s.t==='special'?'special':s.t);
+    el.textContent=s.label||'';
+    if(s.tip) el.setAttribute('data-tip',s.tip);
+    grid.appendChild(el);
+  });
+
+  document.getElementById('sc-fill').textContent=`${students}/${total} filled`;
+  const deptCount=activeDepts.length;
+  document.getElementById('sc-mix').textContent=`${deptCount} Dept${deptCount>1?'s':''} Mixed`;
+  toast(`⚡ ${hallName} — ${students} seats allocated across ${deptCount} departments!`);
+}
+
+// Init on load
+buildStudentTable();
+buildAttendance();
+generateSeating();
+</script>
+</body>
+</html>
